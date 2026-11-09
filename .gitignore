@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Model weights and checkpoints (hosted externally, see README)
+artifacts/
+results/figures/*.png.tmp
+
+# OS
+.DS_Store
