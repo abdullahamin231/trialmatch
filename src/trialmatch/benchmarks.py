@@ -65,7 +65,11 @@ def bench_cache(model, tokenizer, device: str = "cpu") -> dict:
 
     def ids_of(n: int) -> torch.Tensor:
         # real note tokens, truncated / padded to exactly n
-        src = next(t for t in flat if len(t) >= n - 4)
+        src = next((t for t in flat if len(t) >= n - 4), None)
+        if src is None:  # notes too short: pad with EOS (speed benchmark only)
+            src = flat[-1]
+            ids = (src + [tokenizer.eos_token_id] * n)[:n]
+            return torch.tensor([ids], device=device)
         ids = (src[: n - 1] + [tokenizer.eos_token_id])[:n]
         return torch.tensor([ids], device=device)
 
