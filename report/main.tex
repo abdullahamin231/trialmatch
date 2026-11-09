@@ -1,0 +1,145 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\input{generated/macros.tex}
+
+\title{TrialMatch: Evidence-Grounded Patient--Trial Eligibility Screening\\
+with Cache-Aware, Tiled and Speculative Transformer Inference}
+
+\author{\IEEEauthorblockN{Abdullah Amin}
+\IEEEauthorblockA{Generative AI, Semester 7\\
+Individual assignment submission}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Matching a patient narrative against the inclusion and exclusion criteria of a clinical
+trial requires per-criterion decisions that are both correct and traceable to evidence in
+the record. We present TrialMatch, a 370M-parameter decoder-only Transformer
+(SmolLM2-360M-Instruct) fine-tuned with Low-Rank Adaptation on the TrialGPT Criterion
+Annotations dataset under a mandated patient-grouped 37/8/8 split. The system predicts one
+of six preserved expert categories per criterion---including \emph{not enough information}
+and \emph{not applicable}---and cites the supporting note sentences by identifier. Beyond
+task accuracy, we study inference itself: an explicitly owned key--value cache with
+verified greedy equivalence against an uncached reference across input/output lengths; a
+tiled attention kernel with online softmax validated numerically against a materialised
+reference and PyTorch SDPA; and a from-scratch greedy speculative decoder over a
+135M/360M draft--target pair whose emitted tokens provably match plain greedy decoding.
+All components are exposed through a browser application with a live benchmark view.
+Test-set results: \TunedTestAcc{} accuracy and \TunedTestMacroF{} macro-F1 after
+fine-tuning (base model: \BaseTestAcc{}), with evidence-sentence F1 of
+\TunedTestEvFone{} (micro). We report honest negative results where expected---notably
+that a 135M draft cannot amortise its overhead against a 360M target at this scale---and
+ analyse eight representative failure modes.
+\end{abstract}
+
+\begin{IEEEkeywords}
+clinical decision support, patient--trial matching, LoRA, KV cache, online softmax,
+speculative decoding, evidence grounding
+\end{IEEEkeywords}
+
+\section{Introduction and Problem Statement}
+% TODO(final text): motivate per-criterion eligibility screening; state the two
+% deliverables (screening quality + efficient-inference mechanisms); list contributions.
+
+\section{Related Work}
+% Cite TrialGPT (Jin et al.), LoRA, FlashAttention, online softmax, speculative
+% decoding (Leviathan; Chen), SmolLM2, Qwen2.5, RoPE, GQA.
+% Discuss: what TrialGPT does (GPT-4 prompting + retrieval), why a compact open-weight
+% fine-tuned model with constrained decoding is a fair, reproducible alternative.
+
+\section{Materials and Methods}
+\subsection{Dataset and Split}
+We use the prescribed \texttt{ncbi/TrialGPT-Criterion-Annotations} corpus. The GPT-4
+prediction columns are discarded at load time and can never enter features or metrics.
+Unique patient identifiers are sorted, shuffled with \texttt{numpy.random.default_rng(42)}
+and assigned 37/8/8 to train/validation/test (602/206/206 annotations), with an executed
+leakage check and a published manifest of patient IDs, counts and fingerprints.
+
+\subsection{Model Selection}
+% TODO: compare two candidates (SmolLM2-360M vs Qwen2.5-0.5B/1.5B): parameters,
+% license (Apache-2.0), context window, tokenizer, memory; justify the pick.
+
+\subsection{Input/Output Schema and Fine-Tuning}
+Each example renders the note with its \emph{dataset-native} sentence numbering, the
+criterion type and text; the target is a two-line answer \texttt{LABEL: ...} /
+\texttt{EVIDENCE: [ids]}. Loss is computed on answer tokens only (prompt masked with
+$-100$). At inference the label slot is restricted by a character trie over the labels
+legal for the criterion type; unparseable output maps to \emph{not enough information}
+rather than a positive decision. % hyperparameters table: r=16, alpha=32, lr=1e-3, ...
+
+\subsection{Inference Mechanisms}
+\subsubsection{KV cache} We own the cache as an explicit object (append, truncate, byte
+accounting) and drive the checkpoint's layers manually: rotary positions continue at the
+cached offset, prefill uses an offset-aware causal mask, decode steps are single-query
+attends over the full cache. The uncached reference recomputes the whole prefix per token.
+\subsubsection{Tiled attention} The tiled kernel walks key blocks with running maxima and
+normalisers (online softmax), rescaling the accumulator by $\exp(m_{\text{old}}-m_{\text{new}})$.
+\subsubsection{Speculative decoding} A 135M draft proposes $\gamma$ tokens from its own
+cache; the target verifies all of them in one pass; the matching prefix is accepted, the
+first mismatch is corrected with the target's argmax, and a bonus token follows a full
+accept. Both caches are resynchronised at round boundaries; the label trie is applied to
+the target's argmax during verification.
+
+\subsection{Application Workflow}
+% TODO: describe app screens: note+criteria input, per-criterion results with evidence,
+% aggregated verdict rule, provenance-complete export, live benchmark tab, disclaimer.
+
+\section{Experimental Setup and Metrics}
+Common protocol: deterministic greedy decoding (temperature 0), identical prompts for base
+vs.\ tuned comparisons, fixed held-out test untouched until final evaluation.
+Classification: accuracy, macro-F1, per-class precision/recall/F1 and confusion matrices
+overall and per criterion type. Evidence retrieval: micro and macro precision/recall/F1;
+records with an empty gold set are excluded from the macro mean and reported separately
+(an empty prediction on an empty gold set counts as agreement in the micro counts).
+Benchmarks: 2 warm-ups + 5 repetitions, median, \texttt{torch.cuda.synchronize()} on GPU,
+peak-memory capture per run.
+
+\section{Results and Discussion}
+\subsection{Eligibility and Evidence Quality}
+\input{tables/classification.tex}
+\input{tables/perclass.tex}
+% TODO: interpret the tables; insert figures/ cm_*.png + training curves; discuss
+% inclusion vs exclusion asymmetry (label imbalance: 387/602 exclusion in train).
+
+\subsection{Correctness of the Inference Mechanisms}
+The cached decoder produces token-identical outputs to the uncached reference (and to HF
+\texttt{generate}) across \KVEqCases{} input/output configurations; the speculative
+decoder matches plain greedy on \SpecEqCases{} configurations for $\gamma\in\{2,4\}$.
+A subtle offset bug (multi-token verification queries masked by local rather than
+absolute positions) surfaced exactly through this suite and was fixed---evidence that
+token-equivalence testing is not ceremonial. % TODO: table correctness_summary numbers
+
+\subsection{Efficiency Measurements}
+\input{tables/cache.tex}
+\input{tables/attention.tex}
+\input{tables/spec.tex}
+% TODO: interpret: cache speedup vs S; why tiled lags SDPA (eager Python loop vs fused
+% kernel, HBM round-trips); why the 135M draft cannot beat the 360M target (acceptance
+% rate vs draft-step cost at this scale).
+
+\subsection{Failure Analysis}
+% TODO: walk through >=8 errors from results/errors_tuned_test.json: missing evidence,
+% hallucinated evidence, insufficient-information failures, contradictory verdicts,
+% parse failures, latency outliers. Never treat absent evidence as eligibility proof.
+
+\section{Limitations}
+% TODO: 360M scale; single-dataset; template explanations; verdict aggregation is
+% rule-based and unlabeled; greedy-only decoding; educational scope.
+
+\section{Conclusion}
+% TODO: summary of what was demonstrated and the defence-ready takeaways.
+
+\section*{AI-Use Appendix}
+% TODO: declare assistant usage (code drafting, debugging, report editing), per course
+% policy; all reused code tested and understood; the live defence covers details.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}
