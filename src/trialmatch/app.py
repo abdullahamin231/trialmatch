@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import tempfile
 import time
 from datetime import datetime, timezone
 
@@ -36,6 +37,15 @@ DISCLAIMER = (
 )
 
 STATE: dict = {}
+
+
+def _report_download(content: str, suffix: str) -> str:
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", suffix=suffix, prefix="trialmatch-report-",
+        delete=False,
+    ) as report_file:
+        report_file.write(content)
+    return report_file.name
 
 
 def _variant_choices() -> list:
@@ -152,7 +162,39 @@ def screen(patient_note: str, criteria_text: str, variant: str, mode: str,
     }
     report = json.dumps({"verdict": verdict, "criteria": rows, "provenance": provenance},
                         indent=2)
-    return rows, explanations, verdict, report, report
+    markdown_rows = []
+    for row, explanation in zip(rows, explanations):
+        cells = [*row, explanation]
+        markdown_rows.append(
+            "| " + " | ".join(
+                str(cell).replace("|", r"\|").replace("\n", " ")
+                for cell in cells
+            ) + " |"
+        )
+    markdown = "\n".join([
+        "# TrialMatch screening report",
+        "",
+        f"**Preliminary verdict:** {verdict}",
+        "",
+        f"**Generated:** {stamp}",
+        f"**Model:** {TARGET_MODEL}",
+        f"**Adapter:** {provenance['adapter'] or 'base model'}",
+        f"**Decoding:** {mode} (gamma {gamma})",
+        "",
+        DISCLAIMER,
+        "",
+        "| Type | Criterion | Decision | Evidence IDs | Evidence text | Explanation |",
+        "|---|---|---|---|---|---|",
+        *markdown_rows,
+        "",
+    ])
+    return (
+        rows,
+        explanations,
+        verdict,
+        _report_download(report, ".json"),
+        _report_download(markdown, ".md"),
+    )
 
 
 # ---------------------------------------------------------------------------
