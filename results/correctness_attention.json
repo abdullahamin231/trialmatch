@@ -1,0 +1,95 @@
+{
+  "suite": "attention",
+  "pass": true,
+  "cases": [
+    {
+      "case": "small causal",
+      "shape": "B1 H2 Sq16 Sk16 D32 Hkv2",
+      "causal": true,
+      "max_abs_err_vs_reference": 2.980232238769531e-07,
+      "mean_abs_err_vs_reference": 2.992106828969554e-08,
+      "max_abs_err_vs_sdpa": 2.384185791015625e-07,
+      "q_blocks": 1,
+      "k_blocks_scanned": 1,
+      "pass": true
+    },
+    {
+      "case": "small non-causal",
+      "shape": "B1 H2 Sq16 Sk16 D32 Hkv2",
+      "causal": false,
+      "max_abs_err_vs_reference": 3.5762786865234375e-07,
+      "mean_abs_err_vs_reference": 2.850353553185414e-08,
+      "max_abs_err_vs_sdpa": 2.384185791015625e-07,
+      "q_blocks": 1,
+      "k_blocks_scanned": 1,
+      "pass": true
+    },
+    {
+      "case": "rectangular causal (decode-style offset)",
+      "shape": "B2 H4 Sq64 Sk128 D64 Hkv4",
+      "causal": true,
+      "max_abs_err_vs_reference": 3.5762786865234375e-07,
+      "mean_abs_err_vs_reference": 2.5421977412065644e-08,
+      "max_abs_err_vs_sdpa": 4.76837158203125e-07,
+      "q_blocks": 2,
+      "k_blocks_scanned": 7,
+      "pass": true
+    },
+    {
+      "case": "rectangular non-causal",
+      "shape": "B1 H4 Sq64 Sk128 D64 Hkv4",
+      "causal": false,
+      "max_abs_err_vs_reference": 2.980232238769531e-07,
+      "mean_abs_err_vs_reference": 2.4458483238731787e-08,
+      "max_abs_err_vs_sdpa": 5.364418029785156e-07,
+      "q_blocks": 2,
+      "k_blocks_scanned": 8,
+      "pass": true
+    },
+    {
+      "case": "GQA causal 256",
+      "shape": "B1 H8 Sq256 Sk256 D64 Hkv2",
+      "causal": true,
+      "max_abs_err_vs_reference": 5.364418029785156e-07,
+      "mean_abs_err_vs_reference": 2.503867335690302e-08,
+      "max_abs_err_vs_sdpa": 6.556510925292969e-07,
+      "q_blocks": 8,
+      "k_blocks_scanned": 36,
+      "pass": true
+    },
+    {
+      "case": "single query over cache (Sq=1, offset=128)",
+      "shape": "B1 H4 Sq1 Sk129 D64 Hkv4",
+      "causal": true,
+      "max_abs_err_vs_reference": 1.1920928955078125e-07,
+      "mean_abs_err_vs_reference": 2.008755473070778e-08,
+      "max_abs_err_vs_sdpa": 2.384185791015625e-07,
+      "q_blocks": 1,
+      "k_blocks_scanned": 5,
+      "pass": true
+    },
+    {
+      "case": "single query, extreme GQA (H_kv=1)",
+      "shape": "B1 H4 Sq1 Sk129 D64 Hkv1",
+      "causal": true,
+      "max_abs_err_vs_reference": 8.940696716308594e-08,
+      "mean_abs_err_vs_reference": 1.7372258298564702e-08,
+      "max_abs_err_vs_sdpa": 1.7881393432617188e-07,
+      "q_blocks": 1,
+      "k_blocks_scanned": 5,
+      "pass": true
+    },
+    {
+      "case": "long causal 512",
+      "shape": "B1 H6 Sq512 Sk512 D64 Hkv6",
+      "causal": true,
+      "max_abs_err_vs_reference": 4.76837158203125e-07,
+      "mean_abs_err_vs_reference": 2.248151353967387e-08,
+      "max_abs_err_vs_sdpa": 5.960464477539062e-07,
+      "q_blocks": 16,
+      "k_blocks_scanned": 136,
+      "pass": true
+    }
+  ],
+  "fully_masked_row_finite": true
+}

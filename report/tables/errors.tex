@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{Selected case-level errors and outliers from the tuned held-out test
+predictions. Evidence IDs refer to the original numbered patient note.}
+\label{tab:errors}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{rlp{6.0cm}lp{3.2cm}r}
+\toprule
+ID & Type & Criterion & Gold $\rightarrow$ prediction & Evidence IDs (gold; prediction) & Latency (s) \\
+\midrule
+161 & inclusion & Patients undergoing elective carotid endarterectomy & not included $\rightarrow$ included & gold []; pred [0] & 0.345 \\
+165 & exclusion & Pregnancy & not applicable $\rightarrow$ not excluded & gold []; pred [] & 0.725 \\
+169 & exclusion & Patients with an estimated pre-operative glomerular filtration rate <... & not enough information $\rightarrow$ not excluded & gold []; pred [] & 0.405 \\
+176 & inclusion & No medical history of central vena catheterization. & included $\rightarrow$ not enough information & gold [0]; pred [] & 0.351 \\
+179 & exclusion & Had been performed central venous puncture or catheterization before. & not excluded $\rightarrow$ not excluded & gold [0]; pred [] & 0.302 \\
+185 & inclusion & Patients were included if they were diagnosed with Shock, Acute respiratory... & included $\rightarrow$ not enough information & gold [2, 3]; pred [] & 0.363 \\
+193 & exclusion & Patients were moribund. & not enough information $\rightarrow$ not excluded & gold [0, 1, 2, 3, 4]; pred [] & 0.295 \\
+307 & inclusion & Patient selection should be cautious, covering basically 5 types of liver... & not enough information $\rightarrow$ not enough information & gold [3]; pred [0, 1, 2, 3, 4] & 1.177 \\
+831 & inclusion & Oxygen saturation of > 94 \% and normal blood pressure (Systolic between 150 -... & not enough information $\rightarrow$ not enough information & gold [7]; pred [0, 1, 2, 3, 4] & 1.231 \\
+832 & inclusion & Symptom Score no greater than 6 (out of a possible 24) for total symptom score... & not enough information $\rightarrow$ not enough information & gold []; pred [0, 1, 2, 3, 4] & 1.200 \\
+\bottomrule
+\end{tabular}}
+\end{table*}

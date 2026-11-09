@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{KV-cache vs.\ uncached full recompute (greedy, identical inputs;
+device cuda, median of 5 after 2 warm-ups).}
+\label{tab:cache}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{rrcccc}
+\toprule
+$S$ & new & cached tok/s & uncached tok/s & speedup & equal \\
+\midrule
+128 & 16 & 28.63 & 19.47 & 1.5$\times$ & True \\
+128 & 48 & 28.07 & 16.53 & 1.7$\times$ & True \\
+512 & 16 & 28.58 & 5.87 & 4.9$\times$ & True \\
+512 & 48 & 27.68 & 5.50 & 5.0$\times$ & True \\
+1024 & 16 & 19.94 & 2.55 & 7.8$\times$ & True \\
+1024 & 48 & 28.02 & 2.56 & 11.0$\times$ & True \\
+\bottomrule
+\end{tabular}}
+\end{table}

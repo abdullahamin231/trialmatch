@@ -36,7 +36,7 @@ Test-set results: \TunedTestAcc{} accuracy and \TunedTestMacroF{} macro-F1 after
 fine-tuning (base model: \BaseTestAcc{}), with evidence-sentence F1 of
 \TunedTestEvFone{} (micro). We report honest negative results where expected---notably
 that a 135M draft cannot amortise its overhead against a 360M target at this scale---and
- analyse eight representative failure modes.
+ analyse nine aggregate failure patterns.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -45,26 +45,86 @@ speculative decoding, evidence grounding
 \end{IEEEkeywords}
 
 \section{Introduction and Problem Statement}
-% TODO(final text): motivate per-criterion eligibility screening; state the two
-% deliverables (screening quality + efficient-inference mechanisms); list contributions.
+Clinical trial eligibility is usually expressed as a long list of inclusion and
+exclusion criteria, while patient information is distributed across free-text records.
+Making a trial-level decision directly can hide which individual requirement is met,
+contradicted, or simply undocumented. TrialMatch therefore treats each criterion as a
+separate prediction and returns evidence sentence identifiers with the decision. Its
+output is a research aid for inspection, not an enrollment recommendation.
+
+The work has two goals: measure criterion and evidence quality after lightweight
+supervised adaptation, and implement/test three inference mechanisms rather than only
+calling library switches. The contributions are (1) a fixed, patient-grouped benchmark
+with a constrained six-label output schema; (2) explicit cache-aware decoding, tiled
+online-softmax attention, and greedy speculative decoding with equivalence tests; and
+(3) a browser application that exposes per-criterion results, traceable sentences, and
+live latency comparisons. The held-out results show a useful improvement in label
+accuracy after tuning, but weak macro-F1 and evidence retrieval remain important
+limitations.
 
 \section{Related Work}
-% Cite TrialGPT (Jin et al.), LoRA, FlashAttention, online softmax, speculative
-% decoding (Leviathan; Chen), SmolLM2, Qwen2.5, RoPE, GQA.
-% Discuss: what TrialGPT does (GPT-4 prompting + retrieval), why a compact open-weight
-% fine-tuned model with constrained decoding is a fair, reproducible alternative.
+TrialGPT studies patient--trial matching with large-model reasoning and retrieval over
+trial criteria \cite{jin2024trialgpt}. This project instead evaluates a compact open
+decoder on criterion-level annotations, with a fixed split and an explicit evidence-ID
+output. Low-Rank Adaptation (LoRA) freezes pretrained weights and learns low-rank
+updates \cite{hu2022lora}, reducing the trainable parameter count for a small supervised
+dataset. SmolLM2 is a compact open model family \cite{allal2025smollm2}; Qwen2.5
+provides a somewhat larger candidate with a longer advertised context
+\cite{qwen2024qwen2}.
+
+The Transformer uses scaled dot-product attention \cite{vaswani2017attention}. Exact
+online normalization permits softmax to be accumulated tile by tile
+\cite{milakov2018online}; FlashAttention demonstrates why minimizing memory traffic
+matters for high-performance kernels \cite{dao2022flashattention}. KV caching avoids
+recomputing keys and values for the already-seen prefix. Greedy speculative decoding
+uses a smaller model to propose tokens that the target verifies, preserving the target
+sequence while potentially reducing serial target calls
+\cite{leviathan2023speculative,chen2023accelerating}. RoPE and grouped-query attention
+are relevant to the position and head layouts of modern decoder models
+\cite{su2021roformer,ainslie2023gqa}. These approaches motivate an implementation and
+measurement study; they do not imply that an eager educational kernel will outperform
+fused production backends.
 
 \section{Materials and Methods}
 \subsection{Dataset and Split}
 We use the prescribed \texttt{ncbi/TrialGPT-Criterion-Annotations} corpus. The GPT-4
 prediction columns are discarded at load time and can never enter features or metrics.
-Unique patient identifiers are sorted, shuffled with \texttt{numpy.random.default_rng(42)}
+Unique patient identifiers are sorted, shuffled with
+\texttt{numpy.random.default\_rng(42)}
 and assigned 37/8/8 to train/validation/test (602/206/206 annotations), with an executed
 leakage check and a published manifest of patient IDs, counts and fingerprints.
 
 \subsection{Model Selection}
-% TODO: compare two candidates (SmolLM2-360M vs Qwen2.5-0.5B/1.5B): parameters,
-% license (Apache-2.0), context window, tokenizer, memory; justify the pick.
+We considered SmolLM2-360M-Instruct and Qwen2.5-0.5B-Instruct as open-weight
+decoder-only candidates. Both have Apache-2.0 model-card licensing. The target
+checkpoint has 370.5M parameters (about 1.48 GB for raw FP32 weights); the alternative
+has 0.49B parameters (about 1.96 GB at FP32). The model cards list 8,192 and 32,768
+maximum context tokens respectively, but this experiment caps combined prompt and target length at 1,024 tokens,
+so extra context was not the deciding factor. SmolLM2 was selected to fit the available
+T4/8-GB development environment with less memory pressure; it also has a 49,152-token
+tokenizer compatible by construction with the selected 135M draft. Evaluation uses the
+same target checkpoint before and after tuning. Model-card details:
+\url{https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct} and
+\url{https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct}. Table~\ref{tab:models}
+summarizes the trade-off.
+
+\begin{table}[t]
+\centering
+\caption{Candidate model comparison used for selection. FP32 weight sizes are
+parameter-count estimates and exclude activations and runtime overhead.}
+\label{tab:models}
+\begin{tabular}{lcc}
+\toprule
+ & SmolLM2-360M & Qwen2.5-0.5B \\
+\midrule
+Parameters & 370.5M & $\sim$0.5B \\
+Raw FP32 weights & $\sim$1.48 GB & $\sim$2.0 GB \\
+License & Apache-2.0 & Apache-2.0 \\
+Layers / Q:KV heads & 32 / 15:5 & 24 / 14:2 \\
+Context / vocab & 8,192 / 49,152 & 32,768 / 151,936 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Input/Output Schema and Fine-Tuning}
 Each example renders the note with its \emph{dataset-native} sentence numbering, the
@@ -72,7 +132,39 @@ criterion type and text; the target is a two-line answer \texttt{LABEL: ...} /
 \texttt{EVIDENCE: [ids]}. Loss is computed on answer tokens only (prompt masked with
 $-100$). At inference the label slot is restricted by a character trie over the labels
 legal for the criterion type; unparseable output maps to \emph{not enough information}
-rather than a positive decision. % hyperparameters table: r=16, alpha=32, lr=1e-3, ...
+rather than a positive decision. Prompt plus answer is truncated at 1,024 tokens; this
+keeps computation bounded but can remove late note content, so cited evidence quality
+is especially important for long records.
+
+The final run used LoRA rank 16, alpha 32, dropout 0.05, targeting the q/k/v/o attention
+projections and gate/up/down MLP projections, batch size 2 with accumulation 4
+(effective batch 8), learning rate $10^{-3}$,
+three epochs, and 225 optimizer steps. There were 8.68M trainable parameters of
+370.5M total. The prompt portion is excluded from loss, and training used the recorded
+FP32 master weights with GPU autocast. The validation loss was evaluated every 20
+optimizer steps on a fixed validation subset; the training and validation curve is
+shown in Fig.~\ref{fig:training}.
+The complete run configuration is summarized in Table~\ref{tab:training}.
+
+\begin{table}[t]
+\centering
+\caption{Fine-tuning configuration of the final LoRA run.}
+\label{tab:training}
+\begin{tabular}{lc}
+\toprule
+Setting & Value \\
+\midrule
+Train / validation examples & 602 / 206 \\
+Epochs / optimizer steps & 3 / 225 \\
+LoRA rank / alpha / dropout & 16 / 32 / 0.05 \\
+Target modules & q/k/v/o, gate/up/down \\
+Batch / accumulation & 2 / 4 \\
+Learning rate / schedule & $10^{-3}$ / warmup + cosine \\
+Seq. cap / trainable params & 1,024 / 8.68M \\
+Elapsed training time & 478.5 s (logged run) \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Inference Mechanisms}
 \subsubsection{KV cache} We own the cache as an explicit object (append, truncate, byte
@@ -88,8 +180,40 @@ accept. Both caches are resynchronised at round boundaries; the label trie is ap
 the target's argmax during verification.
 
 \subsection{Application Workflow}
-% TODO: describe app screens: note+criteria input, per-criterion results with evidence,
-% aggregated verdict rule, provenance-complete export, live benchmark tab, disclaimer.
+The Gradio application accepts a numbered patient note and one criterion per line
+(optionally prefixed \texttt{inclusion:} or \texttt{exclusion:}), loads a selected base
+or tuned checkpoint, and presents the predicted label, original sentence IDs, extracted
+sentence text, and a cautious template explanation. It derives a preliminary aggregate
+verdict using explicit rules: any failed criterion yields likely ineligible; otherwise
+unknown criteria yield undetermined; all-positive criteria yield likely eligible. This
+rule is not trained or scored as a ground-truth patient outcome. A downloadable JSON
+report records the results, timestamp, model/adapter, decoding mode and counts.
+A separate live benchmark view compares uncached, cached, and speculative decoding on
+the current note. Input validation rejects empty notes or criteria and requires numbered
+sentences. The interface displays an educational-use disclaimer. Start it with
+\texttt{cd src \&\& python -m trialmatch.app}; the default address is
+\url{http://127.0.0.1:7860}.
+
+\begin{figure}[t]
+\centering
+\fbox{\begin{minipage}{0.92\columnwidth}
+\centering
+Patient note + criterion type/text\\
+$\downarrow$\\
+Shared prompt and numbered sentences\\
+$\downarrow$\\
+SmolLM2 target (base or LoRA)\\
+$\downarrow$\\
+Trie-constrained label + parsed evidence IDs\\
+$\downarrow$\\
+Evidence text, cautious explanation, explicit rule-based verdict\\
+$\downarrow$\\
+Screening table and provenance JSON export
+\end{minipage}}
+\caption{TrialMatch prediction and application data flow. The derived overall verdict
+is a rule-based summary, not a learned or annotated label.}
+\label{fig:architecture}
+\end{figure}
 
 \section{Experimental Setup and Metrics}
 Common protocol: deterministic greedy decoding (temperature 0), identical prompts for base
@@ -105,8 +229,35 @@ peak-memory capture per run.
 \subsection{Eligibility and Evidence Quality}
 \input{tables/classification.tex}
 \input{tables/perclass.tex}
-% TODO: interpret the tables; insert figures/ cm_*.png + training curves; discuss
-% inclusion vs exclusion asymmetry (label imbalance: 387/602 exclusion in train).
+The fine-tuned checkpoint reaches 63.1\% accuracy and 0.342 macro-F1 on the held-out
+test set, compared with 32.0\% and 0.097 for the base checkpoint. The tuned model emits
+a valid constrained label on every record, while the base evaluation has a 100\%
+invalid-label rate; thus its fallback-based classification metrics are not a clean
+measure of free-form base-model label quality. On test data the tuned inclusion accuracy
+is 52.0\% (macro-F1 0.261) and exclusion accuracy is 69.5\% (macro-F1 0.273). These
+accuracy values mask substantial class imbalance: the test split contains 91
+\emph{not excluded} examples and zero \emph{excluded} examples, and the train split has
+387 exclusion versus 215 inclusion annotations. Consequently the zero support for the
+\emph{excluded} class prevents a test-set estimate of its recall.
+
+Evidence retrieval is much weaker than label classification: micro precision/recall/F1
+are 0.281/0.170/0.212, with 16 true-positive, 41 false-positive and 78 false-negative
+sentence matches among records with annotated evidence. In addition, of 145 examples
+with no gold evidence, 12 predictions nevertheless cited sentences; those are
+unsupported-citation cases. Empty-gold records are excluded from macro averaging and
+reported separately, as specified by the evaluation convention. Fig.~\ref{fig:cm}
+visualizes the overall and per-type confusion matrices. It shows the exclusion model's
+strong preference for \emph{not excluded} and the inclusion model's confusion between
+\emph{included} and insufficient information. Table~\ref{tab:main} compares overall
+base/tuned and split metrics; Table~\ref{tab:perclass} exposes the class-level behavior.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{../results/figures/cm_tuned_test.png}
+\caption{Held-out test confusion matrices for the tuned checkpoint. Axes use gold rows
+and predicted columns; class support differs by criterion type.}
+\label{fig:cm}
+\end{figure*}
 
 \subsection{Correctness of the Inference Mechanisms}
 The cached decoder produces token-identical outputs to the uncached reference (and to HF
@@ -114,31 +265,104 @@ The cached decoder produces token-identical outputs to the uncached reference (a
 decoder matches plain greedy on \SpecEqCases{} configurations for $\gamma\in\{2,4\}$.
 A subtle offset bug (multi-token verification queries masked by local rather than
 absolute positions) surfaced exactly through this suite and was fixed---evidence that
-token-equivalence testing is not ceremonial. % TODO: table correctness_summary numbers
+token-equivalence testing is not ceremonial. The attention suite also passed eight
+controlled cases, including causal/non-causal masks, grouped-query heads, rectangular
+decode-style shapes, and a fully masked row that remains finite in the tiled kernel.
+The maximum observed tiled-attention absolute error in the benchmark cases was
+$1.07\times10^{-6}$; all reported cases satisfy the $2\times10^{-4}$ test tolerance.
 
 \subsection{Efficiency Measurements}
 \input{tables/cache.tex}
 \input{tables/attention.tex}
 \input{tables/spec.tex}
-% TODO: interpret: cache speedup vs S; why tiled lags SDPA (eager Python loop vs fused
-% kernel, HBM round-trips); why the 135M draft cannot beat the 360M target (acceptance
-% rate vs draft-step cost at this scale).
+The cache benchmark has exact token equality in all six settings. At prompt length
+1,024, cached decoding processes about 20--28 tokens/s versus 2.6 tokens/s without
+reuse, a roughly 7.8--11.0$\times$ decode-throughput gain; the gap grows with prefix
+length because full recomputation repeatedly revisits old tokens. Prefill is reported
+separately, and cached peak memory increases with prompt length (about 1.53--2.01 GB
+across the recorded cases).
+The settings and speedups are listed in Table~\ref{tab:cache}.
+
+The tiled implementation reduces peak attention memory relative to the materialized
+reference at the larger sequence lengths: at $S=2{,}048$, 32.2 MB versus 249.7 MB.
+However, its eager Python block loop takes 250 ms, compared with 1.89 ms for SDPA,
+which dispatches to a fused backend. This is the expected distinction between
+algorithmic memory savings and an optimized GPU kernel. Speculative decoding has a
+mean acceptance rate of 0.643 but achieves only 0.37--0.52$\times$ plain greedy
+throughput in the six measured runs. Draft model execution, verification, and
+resynchronization overhead outweigh the saved serial target calls at this small model
+scale; every output nevertheless equals target greedy exactly. The latency and memory
+measurements appear in Tables~\ref{tab:attention} and~\ref{tab:spec}.
 
 \subsection{Failure Analysis}
-% TODO: walk through >=8 errors from results/errors_tuned_test.json: missing evidence,
-% hallucinated evidence, insufficient-information failures, contradictory verdicts,
-% parse failures, latency outliers. Never treat absent evidence as eligibility proof.
+Table~\ref{tab:errors} names ten representative test cases from the saved, 206-record
+prediction export. The most direct contradictory cases are annotations 161--164: the
+same patient's note describes femoral-artery catheterization, yet all four unrelated
+vascular-surgery inclusion criteria were labeled \emph{included}; each prediction cited
+sentence 0 despite an empty gold evidence set. Annotation 165 also labels a pregnancy
+exclusion criterion \emph{not excluded} rather than \emph{not applicable}. In
+annotations 169 and 174, the note does not establish a pre-operative GFR or previous
+axillary surgery, but the model again predicts \emph{not excluded} instead of
+\emph{not enough information}. These examples show that an unmentioned exclusion
+condition must not be interpreted as disproven.
+
+Evidence failures occur even when the class is correct. For annotation 179, the model
+predicts \emph{not excluded} but omits gold sentence 0, which mentions cardiac
+catheterization. In annotation 185, it returns insufficient information with no
+citations, although the annotation marks sentences 2--3 (tachypnea/tachycardia and
+hypotension) as evidence for the shock/ARDS inclusion criterion. Annotation 193 likewise
+predicts \emph{not excluded} for ``Patients were moribund'' and cites nothing despite
+the gold annotation spanning all five note sentences. Latency outliers 307, 831, and
+832 take 1.177--1.231 s; examples 307 and 831 over-cite sentences 0--4 while omitting
+the gold sentence 3 or 7, and 832 cites sentences 0--4 despite an empty gold set.
+Across the full test export, overlapping categories include 39 wrong-label/evidence-
+correct, 37 wrong-label/evidence-wrong, 40 missing-evidence, 12 unsupported-evidence,
+37 insufficient-information, four contradictory-verdict and three latency-outlier
+records. The trie constrained every label to its criterion type; the main remaining
+risks are unsupported affirmations and evidence localization, not invalid label syntax.
+\input{tables/errors.tex}
+These categories overlap: for example, annotations 161--164 count as contradictory
+verdicts, unsupported citations, and wrong-label/evidence-wrong cases. The exported
+error file contains representative examples; category totals are computed from the
+complete prediction set.
 
 \section{Limitations}
-% TODO: 360M scale; single-dataset; template explanations; verdict aggregation is
-% rule-based and unlabeled; greedy-only decoding; educational scope.
+The 360M model is small for complex clinical reasoning, the study uses one dataset and
+one patient-grouped split, and the held-out test has zero examples of the \emph{excluded}
+label. Evidence recall is low, and template explanations summarize predicted citations
+rather than independently validating clinical reasoning. The patient-level verdict is
+rule-based and has no ground-truth label. Evaluation uses deterministic greedy decoding;
+benchmarks are hardware- and implementation-specific. Long notes may be truncated at
+1,024 tokens. The tuned adapter and per-example test/validation exports are now present
+locally. The adapter is excluded from Git but is available with the prediction exports
+and compiled report from the public
+\href{https://github.com/abdullahamin231/trialmatch/releases/tag/assignment-2-artifacts-2026-11}{artifact release}.
+Application screenshots and the recorded demonstration link remain outstanding.
 
 \section{Conclusion}
-% TODO: summary of what was demonstrated and the defence-ready takeaways.
+TrialMatch demonstrates criterion-level eligibility screening with constrained outputs,
+sentence-ID evidence, LoRA adaptation, and from-scratch cache-aware, tiled-attention,
+and speculative-decoding paths. LoRA improves held-out accuracy over the same base
+model, while macro-F1 and evidence retrieval reveal uneven class behavior and weak
+localization. The cache and speculative implementations pass greedy-token equivalence;
+the tiled kernel matches the reference numerically while trading speed for reduced
+memory. Measurements also show that a correct speculative decoder can be slower when
+draft overhead dominates. The main defense takeaway is to distinguish correctness of
+the inference algorithms from task quality and from real-world clinical validity.
 
 \section*{AI-Use Appendix}
-% TODO: declare assistant usage (code drafting, debugging, report editing), per course
-% policy; all reused code tested and understood; the live defence covers details.
+AI assistance was used for code drafting and debugging, report organization, and
+editing. The submitted author is responsible for verifying and understanding the
+implementation, results, sources, and any course-specific disclosure requirements.
+The model outputs are experimental results, not clinical advice.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{../results/figures/training_curve.png}
+\caption{Training and fixed-subset validation answer-token loss from the final recorded
+LoRA run.}
+\label{fig:training}
+\end{figure}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

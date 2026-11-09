@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Forward-pass latency of one attention layer (cuda, fp32).}
+\label{tab:attention}
+\begin{tabular}{rrrrr}
+\toprule
+$S_q$ & heads & reference (ms) & tiled (ms) & SDPA (ms) \\
+\midrule
+256 & 6 & 0.44 & 7.53 & 0.14 \\
+512 & 6 & 0.56 & 22.84 & 0.29 \\
+1024 & 8 & 1.92 & 64.48 & 0.73 \\
+1024 & 8 & 3.58 & 64.73 & 1.25 \\
+2048 & 6 & 5.73 & 249.97 & 1.89 \\
+\bottomrule
+\end{tabular}
+\end{table}

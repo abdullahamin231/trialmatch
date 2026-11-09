@@ -1,0 +1,83 @@
+{
+  "suite": "attention",
+  "device": "cuda",
+  "dtype": "float32",
+  "note": "educational tiled implementation runs eager Python loops; torch SDPA dispatches a fused kernel - FlashAttention-class kernels win by fusing and by avoiding HBM round-trips, which a straightforward PyTorch loop cannot match",
+  "rows": [
+    {
+      "B": 1,
+      "H": 6,
+      "Sq": 256,
+      "D": 64,
+      "Hkv": 6,
+      "max_err_tiled": 4.76837158203125e-07,
+      "max_err_sdpa": 5.066394805908203e-07,
+      "reference_ms": 0.44,
+      "reference_peak_mem_mb": 14.7,
+      "tiled_ms": 7.53,
+      "tiled_peak_mem_mb": 11.9,
+      "sdpa_ms": 0.14,
+      "sdpa_peak_mem_mb": 11.3
+    },
+    {
+      "B": 1,
+      "H": 6,
+      "Sq": 512,
+      "D": 64,
+      "Hkv": 6,
+      "max_err_tiled": 4.76837158203125e-07,
+      "max_err_sdpa": 7.748603820800781e-07,
+      "reference_ms": 0.56,
+      "reference_peak_mem_mb": 27.7,
+      "tiled_ms": 22.84,
+      "tiled_peak_mem_mb": 14.6,
+      "sdpa_ms": 0.29,
+      "sdpa_peak_mem_mb": 14.0
+    },
+    {
+      "B": 1,
+      "H": 8,
+      "Sq": 1024,
+      "D": 64,
+      "Hkv": 8,
+      "max_err_tiled": 1.0728836059570312e-06,
+      "max_err_sdpa": 9.5367431640625e-07,
+      "reference_ms": 1.92,
+      "reference_peak_mem_mb": 94.9,
+      "tiled_ms": 64.48,
+      "tiled_peak_mem_mb": 24.4,
+      "sdpa_ms": 0.73,
+      "sdpa_peak_mem_mb": 23.6
+    },
+    {
+      "B": 2,
+      "H": 8,
+      "Sq": 1024,
+      "D": 64,
+      "Hkv": 8,
+      "max_err_tiled": 4.76837158203125e-07,
+      "max_err_sdpa": 6.854534149169922e-07,
+      "reference_ms": 3.58,
+      "reference_peak_mem_mb": 176.3,
+      "tiled_ms": 64.73,
+      "tiled_peak_mem_mb": 39.5,
+      "sdpa_ms": 1.25,
+      "sdpa_peak_mem_mb": 37.9
+    },
+    {
+      "B": 1,
+      "H": 6,
+      "Sq": 2048,
+      "D": 64,
+      "Hkv": 6,
+      "max_err_tiled": 4.172325134277344e-07,
+      "max_err_sdpa": 5.662441253662109e-07,
+      "reference_ms": 5.73,
+      "reference_peak_mem_mb": 249.7,
+      "tiled_ms": 249.97,
+      "tiled_peak_mem_mb": 32.2,
+      "sdpa_ms": 1.89,
+      "sdpa_peak_mem_mb": 31.6
+    }
+  ]
+}

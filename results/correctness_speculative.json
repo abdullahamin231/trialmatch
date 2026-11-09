@@ -1,0 +1,54 @@
+{
+  "suite": "speculative_equivalence",
+  "pass": true,
+  "cases": [
+    {
+      "prompt_len": 16,
+      "new_tokens": 24,
+      "gamma": 2,
+      "tokens_equal_greedy": true,
+      "acceptance_rate": 0.3704,
+      "rounds": 14,
+      "corrections": 11,
+      "bonus_tokens": 3,
+      "diagnostics": {},
+      "pass": true
+    },
+    {
+      "prompt_len": 16,
+      "new_tokens": 24,
+      "gamma": 4,
+      "tokens_equal_greedy": true,
+      "acceptance_rate": 0.2727,
+      "rounds": 12,
+      "corrections": 10,
+      "bonus_tokens": 2,
+      "diagnostics": {},
+      "pass": true
+    },
+    {
+      "prompt_len": 96,
+      "new_tokens": 32,
+      "gamma": 2,
+      "tokens_equal_greedy": true,
+      "acceptance_rate": 0.913,
+      "rounds": 12,
+      "corrections": 1,
+      "bonus_tokens": 11,
+      "diagnostics": {},
+      "pass": true
+    },
+    {
+      "prompt_len": 96,
+      "new_tokens": 32,
+      "gamma": 4,
+      "tokens_equal_greedy": true,
+      "acceptance_rate": 0.8621,
+      "rounds": 8,
+      "corrections": 1,
+      "bonus_tokens": 7,
+      "diagnostics": {},
+      "pass": true
+    }
+  ]
+}

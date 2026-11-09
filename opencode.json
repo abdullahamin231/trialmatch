@@ -1,0 +1,13 @@
+{
+  "mcp": {
+    "servers": {
+      "colab-mcp": {
+        "type": "local",
+        "command": [
+          "uvx",
+          "git+https://github.com/googlecolab/colab-mcp"
+        ]
+      }
+    }
+  }
+}

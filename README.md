@@ -44,7 +44,26 @@ python -m trialmatch.correctness             # model-free + tiny-model suite
 python -m trialmatch.correctness --real      # same suite on real checkpoints
 python -m trialmatch.benchmarks --all
 python -m trialmatch.app                     # http://127.0.0.1:7860
+cd .. && python scripts/make_tables.py       # report tables + figures
 ```
+
+To compile the report after generating its tables and figures:
+
+```bash
+cd report
+pdflatex -interaction=nonstopmode main.tex
+bibtex main
+pdflatex -interaction=nonstopmode main.tex
+pdflatex -interaction=nonstopmode main.tex
+```
+
+## Colab MCP (VS Code)
+
+The workspace MCP configuration is in `.vscode/mcp.json`. It starts Google's
+`colab-mcp` server with `uvx`; the first launch may download the server and its
+Python 3.13+ environment. In VS Code, reload the window if the server is not listed,
+then use its Colab connection tool and accept the connection in the signed-in Colab
+tab. Keep only one agent connected to a given notebook session at a time.
 
 Training was executed on a free Colab T4 (fp16 autocast over fp32 master weights,
 ~2.1 s/optimizer step, 225 steps, 8.7M trainable LoRA parameters).
@@ -59,6 +78,18 @@ The manifest with patient lists, counts and SHA-256 fingerprints is published at
 
 ## Model weights
 
-The LoRA adapter (SmolLM2-360M-Instruct base) is hosted externally — see
-`artifacts/README.md` after training, or the submission links. Place the adapter under
-`artifacts/lora_smollm2-360m/` to use the `tuned` variant in evaluation and the app.
+The trained LoRA adapter for SmolLM2-360M-Instruct is available in the local workspace
+at `artifacts/lora_smollm2-360m/` (34.8 MB weights). SHA-256 for
+`adapter_model.safetensors`:
+`d117c1048600687af21c67061a78c530d04c2d0f1308babb2f59e99d48e4848c`.
+Weights are excluded from Git and published as a
+[GitHub release](https://github.com/abdullahamin231/trialmatch/releases/tag/assignment-2-artifacts-2026-11).
+Download the [adapter weights](https://github.com/abdullahamin231/trialmatch/releases/download/assignment-2-artifacts-2026-11/adapter_model.safetensors)
+and pair them with the local `adapter_config.json` in that directory. The release also
+contains the compiled report and a ZIP with the adapter, config, tuned test/validation
+predictions, and error exports. The tuned variant loads when `adapter_config.json` and
+`adapter_model.safetensors` are present at that path.
+
+The Colab bundle in `results/trialmatch_colab_artifacts.zip` contains the adapter and
+the tuned test/validation prediction and error exports. Test predictions contain 206
+records, one per held-out annotation.

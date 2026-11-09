@@ -1,0 +1,354 @@
+{
+  "wrong_label_evidence_ok": [
+    {
+      "annotation_id": 15,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Pregnant and nursing women",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 18,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients not eligible for Tc 99m SPECT",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 19,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients in whom beta blockers are contraindicated",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 24,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients with IHD within 6 months after percutaneous coronary intervention(PCI), and who are stable but are going to implement PCI or coronary artery bypass grafting(CABG)",
+      "gold_label": "not applicable",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    }
+  ],
+  "wrong_label_wrong_evidence": [
+    {
+      "annotation_id": 3,
+      "patient_id": "sigir-20141",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patient must understand and be willing, able and likely to comply with all study procedures and restrictions and comprehends the diary cards.",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        8
+      ],
+      "pred_evidence_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: [0, 1, 2, 3, 4, ",
+      "parse_notes": [
+        "unterminated EVIDENCE list"
+      ]
+    },
+    {
+      "annotation_id": 4,
+      "patient_id": "sigir-20141",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patient must be able to give voluntary written informed consent.",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        8
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 8,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Unstable angina",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [
+        0,
+        1,
+        2
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 22,
+      "patient_id": "sigir-20141",
+      "criterion_type": "inclusion",
+      "criterion_text": "Clinical diagnosis of one or more risk factors, such as diabetes, smoking habit, lipid metabolism abnormality, history of ischemic heart disease (IHD) or cerebrovascular disease, obesity (BMI>25), chronic heart failure (NYHA II-III), and electrocardiogram (ECG) abnormality (LVH)",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        3,
+        4
+      ],
+      "pred_evidence_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: [0, 1, 2, 3, 4, ",
+      "parse_notes": [
+        "unterminated EVIDENCE list"
+      ]
+    }
+  ],
+  "missing_evidence": [
+    {
+      "annotation_id": 0,
+      "patient_id": "sigir-20141",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients of chronic stable angina with abnormal Exercise Myocardial Perfusion Spect Scan with reversible and partially reversible ischemic changes.",
+      "gold_label": "not enough information",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        0,
+        1,
+        2
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 4,
+      "patient_id": "sigir-20141",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patient must be able to give voluntary written informed consent.",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        8
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 8,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Unstable angina",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [
+        0,
+        1,
+        2
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 13,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "IDDM (Type-1 diabetes mellitus)",
+      "gold_label": "not excluded",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [
+        4
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    }
+  ],
+  "hallucinated_evidence": [
+    {
+      "annotation_id": 504,
+      "patient_id": "sigir-201427",
+      "criterion_type": "inclusion",
+      "criterion_text": "Adequate liver function as shown by: normal serum bilirubin(\u2264 1.5 Upper Limit Normal {ULN}) and serum transaminases (\u2264 2.0 ULN)",
+      "gold_label": "not enough information",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: [0]",
+      "parse_notes": []
+    }
+  ],
+  "insufficient_info_failure": [
+    {
+      "annotation_id": 8,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Unstable angina",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [
+        0,
+        1,
+        2
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 15,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Pregnant and nursing women",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 18,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients not eligible for Tc 99m SPECT",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 19,
+      "patient_id": "sigir-20141",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients in whom beta blockers are contraindicated",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    }
+  ],
+  "contradictory_verdict": [
+    {
+      "annotation_id": 41,
+      "patient_id": "sigir-20142",
+      "criterion_type": "exclusion",
+      "criterion_text": "Respiratory distress",
+      "gold_label": "excluded",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [
+        4
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 263,
+      "patient_id": "sigir-201415",
+      "criterion_type": "exclusion",
+      "criterion_text": "13. Evidence of uterine pathology other than leiomyoma",
+      "gold_label": "excluded",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [
+        5
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    }
+  ],
+  "latency_outlier": [
+    {
+      "annotation_id": 0,
+      "patient_id": "sigir-20141",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients of chronic stable angina with abnormal Exercise Myocardial Perfusion Spect Scan with reversible and partially reversible ischemic changes.",
+      "gold_label": "not enough information",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        0,
+        1,
+        2
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 3,
+      "patient_id": "sigir-20141",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patient must understand and be willing, able and likely to comply with all study procedures and restrictions and comprehends the diary cards.",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        8
+      ],
+      "pred_evidence_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: [0, 1, 2, 3, 4, ",
+      "parse_notes": [
+        "unterminated EVIDENCE list"
+      ]
+    },
+    {
+      "annotation_id": 22,
+      "patient_id": "sigir-20141",
+      "criterion_type": "inclusion",
+      "criterion_text": "Clinical diagnosis of one or more risk factors, such as diabetes, smoking habit, lipid metabolism abnormality, history of ischemic heart disease (IHD) or cerebrovascular disease, obesity (BMI>25), chronic heart failure (NYHA II-III), and electrocardiogram (ECG) abnormality (LVH)",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        3,
+        4
+      ],
+      "pred_evidence_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: [0, 1, 2, 3, 4, ",
+      "parse_notes": [
+        "unterminated EVIDENCE list"
+      ]
+    }
+  ]
+}

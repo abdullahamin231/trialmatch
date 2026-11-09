@@ -36,9 +36,9 @@ N_TEST_PATIENTS = 8
 # Models
 # --------------------------------------------------------------------------
 # Target model: open-weight, locally executable decoder-only Transformer.
-# 360M parameters, Apache-2.0, 2048-token context, fp32 fits in ~1.5 GB RAM,
-# which is what makes the full pipeline (training + evaluation + live app)
-# executable on the 8 GB / CPU-only machine this work was developed on.
+# 370M parameters, Apache-2.0, 8192-token model context; this project caps each
+# training/evaluation sequence at 1024 tokens. FP32 weights use about 1.5 GB RAM,
+# keeping inference feasible on the development machine as well as a Colab T4.
 TARGET_MODEL = os.environ.get("TRIALMATCH_TARGET", "HuggingFaceTB/SmolLM2-360M-Instruct")
 # Draft model: a genuinely smaller checkpoint from the same family. Both
 # checkpoints ship the identical 49,152-token tokenizer, so draft tokens are

@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Greedy speculative decoding ($\gamma=4$) vs.\ plain greedy on the
+same prompts; draft SmolLM2-135M, target SmolLM2-360M.}
+\label{tab:spec}
+\begin{tabular}{rrccccc}
+\toprule
+prompt & greedy tok/s & spec tok/s & speedup & acc.\ rate & rounds & equal \\
+\midrule
+180 & 19.41 & 10.14 & 0.52$\times$ & 0.64 & 7 & True \\
+180 & 26.20 & 12.62 & 0.48$\times$ & 0.64 & 7 & True \\
+180 & 26.52 & 12.85 & 0.48$\times$ & 0.64 & 7 & True \\
+180 & 26.61 & 13.22 & 0.50$\times$ & 0.64 & 7 & True \\
+180 & 26.58 & 9.81 & 0.37$\times$ & 0.64 & 7 & True \\
+180 & 26.43 & 13.20 & 0.50$\times$ & 0.64 & 7 & True \\
+\bottomrule
+\end{tabular}
+\end{table*}

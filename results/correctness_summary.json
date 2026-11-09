@@ -1,0 +1,7 @@
+{
+  "attention": true,
+  "kv_cache": true,
+  "speculative": true,
+  "wall_clock_s": 34.4,
+  "all_pass": true
+}

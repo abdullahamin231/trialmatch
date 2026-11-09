@@ -1,0 +1,82 @@
+{
+  "suite": "speculative",
+  "target": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "draft": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "gamma": 4,
+  "device": "cuda",
+  "rows": [
+    {
+      "prompt_tokens": 180,
+      "greedy_s": 1.237,
+      "spec_s": 2.368,
+      "speedup": 0.522,
+      "greedy_tok_s": 19.41,
+      "spec_tok_s": 10.14,
+      "acceptance_rate": 0.6429,
+      "rounds": 7,
+      "corrections": 3,
+      "tokens_equal": true
+    },
+    {
+      "prompt_tokens": 180,
+      "greedy_s": 0.916,
+      "spec_s": 1.902,
+      "speedup": 0.482,
+      "greedy_tok_s": 26.2,
+      "spec_tok_s": 12.62,
+      "acceptance_rate": 0.6429,
+      "rounds": 7,
+      "corrections": 3,
+      "tokens_equal": true
+    },
+    {
+      "prompt_tokens": 180,
+      "greedy_s": 0.905,
+      "spec_s": 1.868,
+      "speedup": 0.485,
+      "greedy_tok_s": 26.52,
+      "spec_tok_s": 12.85,
+      "acceptance_rate": 0.6429,
+      "rounds": 7,
+      "corrections": 3,
+      "tokens_equal": true
+    },
+    {
+      "prompt_tokens": 180,
+      "greedy_s": 0.902,
+      "spec_s": 1.816,
+      "speedup": 0.497,
+      "greedy_tok_s": 26.61,
+      "spec_tok_s": 13.22,
+      "acceptance_rate": 0.6429,
+      "rounds": 7,
+      "corrections": 3,
+      "tokens_equal": true
+    },
+    {
+      "prompt_tokens": 180,
+      "greedy_s": 0.903,
+      "spec_s": 2.448,
+      "speedup": 0.369,
+      "greedy_tok_s": 26.58,
+      "spec_tok_s": 9.81,
+      "acceptance_rate": 0.6429,
+      "rounds": 7,
+      "corrections": 3,
+      "tokens_equal": true
+    },
+    {
+      "prompt_tokens": 180,
+      "greedy_s": 0.908,
+      "spec_s": 1.818,
+      "speedup": 0.5,
+      "greedy_tok_s": 26.43,
+      "spec_tok_s": 13.2,
+      "acceptance_rate": 0.6429,
+      "rounds": 7,
+      "corrections": 3,
+      "tokens_equal": true
+    }
+  ],
+  "note": "with a 135M draft against a 360M target both models are so small that per-call Python/launch overhead dominates; a speedup is not expected at this scale - correctness of the emitted sequence and honest accounting are the deliverable"
+}

@@ -1,0 +1,39 @@
+{
+  "suite": "kv_cache_equivalence",
+  "pass": true,
+  "cases": [
+    {
+      "prompt_len": 8,
+      "new_tokens": 16,
+      "tokens_generated": 16,
+      "cached_equals_uncached": true,
+      "matches_hf_generate_use_cache": true,
+      "prefill_s_cached": 0.3061,
+      "decode_s_cached": 0.6026,
+      "decode_s_uncached": 0.8077,
+      "pass": true
+    },
+    {
+      "prompt_len": 64,
+      "new_tokens": 16,
+      "tokens_generated": 16,
+      "cached_equals_uncached": true,
+      "matches_hf_generate_use_cache": true,
+      "prefill_s_cached": 0.0629,
+      "decode_s_cached": 0.8371,
+      "decode_s_uncached": 1.0101,
+      "pass": true
+    },
+    {
+      "prompt_len": 192,
+      "new_tokens": 24,
+      "tokens_generated": 24,
+      "cached_equals_uncached": true,
+      "matches_hf_generate_use_cache": true,
+      "prefill_s_cached": 0.0524,
+      "decode_s_cached": 0.8555,
+      "decode_s_uncached": 1.581,
+      "pass": true
+    }
+  ]
+}

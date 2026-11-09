@@ -1,0 +1,124 @@
+{
+  "suite": "kv_cache",
+  "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "device": "cuda",
+  "timing_protocol": "2 warm-ups + 5 reps, median; torch.cuda.synchronize on GPU",
+  "rows": [
+    {
+      "prompt_len": 128,
+      "new_tokens": 16,
+      "tokens_equal": true,
+      "cached": {
+        "wall_s": 0.608,
+        "prefill_s": 0.0494,
+        "decode_s": 0.5588,
+        "tokens_per_s_decode": 28.63,
+        "peak_mem_mb": 1534.7
+      },
+      "uncached": {
+        "wall_s": 0.869,
+        "prefill_s": 0.0473,
+        "decode_s": 0.8218,
+        "tokens_per_s_decode": 19.47
+      }
+    },
+    {
+      "prompt_len": 128,
+      "new_tokens": 48,
+      "tokens_equal": true,
+      "cached": {
+        "wall_s": 1.758,
+        "prefill_s": 0.0482,
+        "decode_s": 1.7098,
+        "tokens_per_s_decode": 28.07,
+        "peak_mem_mb": 1550.7
+      },
+      "uncached": {
+        "wall_s": 2.954,
+        "prefill_s": 0.0497,
+        "decode_s": 2.9036,
+        "tokens_per_s_decode": 16.53
+      }
+    },
+    {
+      "prompt_len": 512,
+      "new_tokens": 16,
+      "tokens_equal": true,
+      "cached": {
+        "wall_s": 0.703,
+        "prefill_s": 0.1431,
+        "decode_s": 0.5599,
+        "tokens_per_s_decode": 28.58,
+        "peak_mem_mb": 1728.4
+      },
+      "uncached": {
+        "wall_s": 2.859,
+        "prefill_s": 0.1354,
+        "decode_s": 2.7236,
+        "tokens_per_s_decode": 5.87
+      }
+    },
+    {
+      "prompt_len": 512,
+      "new_tokens": 48,
+      "tokens_equal": true,
+      "cached": {
+        "wall_s": 1.885,
+        "prefill_s": 0.1504,
+        "decode_s": 1.7342,
+        "tokens_per_s_decode": 27.68,
+        "peak_mem_mb": 1743.8
+      },
+      "uncached": {
+        "wall_s": 8.873,
+        "prefill_s": 0.143,
+        "decode_s": 8.7299,
+        "tokens_per_s_decode": 5.5
+      }
+    },
+    {
+      "prompt_len": 1024,
+      "new_tokens": 16,
+      "tokens_equal": true,
+      "cached": {
+        "wall_s": 1.164,
+        "prefill_s": 0.3612,
+        "decode_s": 0.8023,
+        "tokens_per_s_decode": 19.94,
+        "peak_mem_mb": 1991.2
+      },
+      "uncached": {
+        "wall_s": 6.617,
+        "prefill_s": 0.3477,
+        "decode_s": 6.2688,
+        "tokens_per_s_decode": 2.55
+      }
+    },
+    {
+      "prompt_len": 1024,
+      "new_tokens": 48,
+      "tokens_equal": true,
+      "cached": {
+        "wall_s": 2.061,
+        "prefill_s": 0.3474,
+        "decode_s": 1.7129,
+        "tokens_per_s_decode": 28.02,
+        "peak_mem_mb": 2009.4
+      },
+      "uncached": {
+        "wall_s": 19.097,
+        "prefill_s": 0.3352,
+        "decode_s": 18.7618,
+        "tokens_per_s_decode": 2.56
+      }
+    }
+  ],
+  "decode_speedup_median_cached_vs_uncached": [
+    1.47,
+    1.7,
+    4.86,
+    5.03,
+    7.81,
+    10.95
+  ]
+}

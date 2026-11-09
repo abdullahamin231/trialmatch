@@ -1,0 +1,407 @@
+{
+  "wrong_label_evidence_ok": [
+    {
+      "annotation_id": 165,
+      "patient_id": "sigir-201410",
+      "criterion_type": "exclusion",
+      "criterion_text": "Pregnancy",
+      "gold_label": "not applicable",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 169,
+      "patient_id": "sigir-201410",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients with an estimated pre-operative glomerular filtration rate < 30mls/min/1.73m2",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 174,
+      "patient_id": "sigir-201410",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients with previous axillary surgery",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 177,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Maintenance hemodialysis after central vena catheterization.",
+      "gold_label": "not included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: []",
+      "parse_notes": []
+    }
+  ],
+  "wrong_label_wrong_evidence": [
+    {
+      "annotation_id": 161,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing elective carotid endarterectomy",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 162,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing open abdominal aortic aneurysm repair",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 163,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing endovascular abdominal aneurysm repair",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 164,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing surgical lower limb revascularisation (suprainguinal or infrainguinal)",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    }
+  ],
+  "missing_evidence": [
+    {
+      "annotation_id": 176,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "No medical history of central vena catheterization.",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        0
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 179,
+      "patient_id": "sigir-201410",
+      "criterion_type": "exclusion",
+      "criterion_text": "Had been performed central venous puncture or catheterization before.",
+      "gold_label": "not excluded",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [
+        0
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 185,
+      "patient_id": "sigir-201411",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients were included if they were diagnosed with Shock, Acute respiratory distress syndrome (ARDS), or both.",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        2,
+        3
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 186,
+      "patient_id": "sigir-201411",
+      "criterion_type": "inclusion",
+      "criterion_text": "Heart rate of at least 90/min;",
+      "gold_label": "included",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        2
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: []",
+      "parse_notes": []
+    }
+  ],
+  "hallucinated_evidence": [
+    {
+      "annotation_id": 161,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing elective carotid endarterectomy",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 162,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing open abdominal aortic aneurysm repair",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 163,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing endovascular abdominal aneurysm repair",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 164,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing surgical lower limb revascularisation (suprainguinal or infrainguinal)",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    }
+  ],
+  "insufficient_info_failure": [
+    {
+      "annotation_id": 169,
+      "patient_id": "sigir-201410",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients with an estimated pre-operative glomerular filtration rate < 30mls/min/1.73m2",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 174,
+      "patient_id": "sigir-201410",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients with previous axillary surgery",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 175,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Chronic renal failure requiring hemodialysis.",
+      "gold_label": "not enough information",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 193,
+      "patient_id": "sigir-201411",
+      "criterion_type": "exclusion",
+      "criterion_text": "Patients were moribund.",
+      "gold_label": "not enough information",
+      "pred_label": "not excluded",
+      "gold_evidence_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "pred_evidence_ids": [],
+      "raw_output": "LABEL: not excluded\nEVIDENCE: []",
+      "parse_notes": []
+    }
+  ],
+  "contradictory_verdict": [
+    {
+      "annotation_id": 161,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing elective carotid endarterectomy",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 162,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing open abdominal aortic aneurysm repair",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 163,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing endovascular abdominal aneurysm repair",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 164,
+      "patient_id": "sigir-201410",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patients undergoing surgical lower limb revascularisation (suprainguinal or infrainguinal)",
+      "gold_label": "not included",
+      "pred_label": "included",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0
+      ],
+      "raw_output": "LABEL: included\nEVIDENCE: [0]",
+      "parse_notes": []
+    }
+  ],
+  "latency_outlier": [
+    {
+      "annotation_id": 307,
+      "patient_id": "sigir-201417",
+      "criterion_type": "inclusion",
+      "criterion_text": "Patient selection should be cautious, covering basically 5 types of liver damage which must be submitted prior to liver volumetry: Metastatic Disease subsidiary right hepatectomy extended to segment IV Metastatic Disease subsidiary right hepatectomy with suspected diseased liver (neoadjuvant chemotherapy) (in cases of doubt may be used liver function test indocyanine green) Bilobar liver metastases with multiple nodules in the right lobe and more than 3 nodules greater than 30 mm in the left hepatic lobe (LHI) will perform lumpectomies the LHI + right portal branch ligation (or postoperative percutaneous embolization) in order to make right hepatectomy 4-6 weeks (two stage surgery) Subsidiary Hepatocarcinoma extended right hepatectomy Liver Injury benign / malignant (Hemangiomas, hydatid cysts or liver tumors / primary bile hepatoblastoma), which by extension threatens the viability of the remaining liver tissue.",
+      "gold_label": "not enough information",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        3
+      ],
+      "pred_evidence_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: [0, 1, 2, 3, 4]",
+      "parse_notes": []
+    },
+    {
+      "annotation_id": 831,
+      "patient_id": "sigir-201516",
+      "criterion_type": "inclusion",
+      "criterion_text": "Oxygen saturation of > 94 % and normal blood pressure (Systolic between 150 - 90, Diastolic between 90-60 mm Hg)",
+      "gold_label": "not enough information",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [
+        7
+      ],
+      "pred_evidence_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: [0, 1, 2, 3, 4, ",
+      "parse_notes": [
+        "unterminated EVIDENCE list"
+      ]
+    },
+    {
+      "annotation_id": 832,
+      "patient_id": "sigir-201516",
+      "criterion_type": "inclusion",
+      "criterion_text": "Symptom Score no greater than 6 (out of a possible 24) for total symptom score with a value no greater than 2 for any one score.",
+      "gold_label": "not enough information",
+      "pred_label": "not enough information",
+      "gold_evidence_ids": [],
+      "pred_evidence_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "raw_output": "LABEL: not enough information\nEVIDENCE: [0, 1, 2, 3, 4, ",
+      "parse_notes": [
+        "unterminated EVIDENCE list"
+      ]
+    }
+  ]
+}
