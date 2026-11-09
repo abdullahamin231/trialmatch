@@ -47,6 +47,15 @@ python -m trialmatch.app                     # http://127.0.0.1:7860
 cd .. && python scripts/make_tables.py       # report tables + figures
 ```
 
+## Application screenshots
+
+The screenshots below use a fictional patient note and show the screening inputs
+and a completed, evidence-linked result.
+
+![TrialMatch screening input form](docs/screenshots/screening-input.png)
+
+![TrialMatch screening result with criterion-level decisions and evidence](docs/screenshots/screening-results.png)
+
 To compile the report after generating its tables and figures:
 
 ```bash
