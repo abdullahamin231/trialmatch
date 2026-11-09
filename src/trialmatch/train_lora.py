@@ -112,6 +112,7 @@ def main() -> None:
     ap.add_argument("--resume", action="store_true",
                     help="continue from <out>/checkpoint-last if it exists")
     ap.add_argument("--save-every", type=int, default=10)
+    ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--amp", action="store_true",
                     help="fp16 autocast forward on GPU (recommended on T4)")
     ap.add_argument("--val-every", type=int, default=25,
@@ -128,6 +129,7 @@ def main() -> None:
     val = read_split("validation")
 
     model = build_model(dtype, True, args.lora_r, args.lora_alpha, args.lora_dropout)
+    model.to(args.device)
     model.train()
     trainable = [p for p in model.parameters() if p.requires_grad]
 
@@ -159,15 +161,17 @@ def main() -> None:
     # fixed validation batch (loss curve must be comparable across steps)
     val_batches = list(make_batches(val[: args.val_examples], tok,
                                     args.batch_size, shuffle=False))
-    scaler = torch.amp.GradScaler("cuda", enabled=args.amp)
+    scaler = torch.amp.GradScaler("cuda", enabled=args.amp and args.device == "cuda")
 
     def val_loss() -> float:
         model.eval()
         tot, n = 0.0, 0
         with torch.no_grad(), torch.autocast("cuda", dtype=torch.float16,
-                                             enabled=args.amp):
+                                             enabled=args.amp and args.device == "cuda"):
             for input_ids, attn, labels in val_batches:
-                out = model(input_ids=input_ids, attention_mask=attn, labels=labels)
+                out = model(input_ids=input_ids.to(args.device),
+                            attention_mask=attn.to(args.device),
+                            labels=labels.to(args.device))
                 tot += float(out.loss) * len(input_ids)
                 n += len(input_ids)
         model.train()
@@ -213,6 +217,9 @@ def main() -> None:
                 if micro % args.grad_accum == 0:
                     step += 1
                 continue
+            input_ids = input_ids.to(args.device)
+            attn = attn.to(args.device)
+            labels = labels.to(args.device)
             out = model(input_ids=input_ids, attention_mask=attn, labels=labels)
             loss = out.loss
             if args.amp:
