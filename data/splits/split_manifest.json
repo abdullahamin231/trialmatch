@@ -1,0 +1,93 @@
+{
+  "dataset": "ncbi/TrialGPT-Criterion-Annotations",
+  "seed": 42,
+  "numpy_generator": "numpy.random.default_rng(42)",
+  "rule": "sort unique patient_id -> default_rng(42).shuffle -> first 37 train, next 8 validation, remaining 8 test",
+  "patients": {
+    "train": [
+      "sigir-20148",
+      "sigir-201416",
+      "sigir-201517",
+      "sigir-201519",
+      "sigir-20159",
+      "sigir-201425",
+      "sigir-201414",
+      "sigir-20157",
+      "sigir-201514",
+      "sigir-20144",
+      "sigir-20152",
+      "sigir-20151",
+      "sigir-201429",
+      "sigir-201426",
+      "sigir-20145",
+      "sigir-201518",
+      "sigir-20154",
+      "sigir-201521",
+      "sigir-201413",
+      "sigir-20146",
+      "sigir-201511",
+      "sigir-20147",
+      "sigir-20155",
+      "sigir-201418",
+      "sigir-20156",
+      "sigir-20143",
+      "sigir-20149",
+      "sigir-201523",
+      "sigir-201424",
+      "sigir-201524",
+      "sigir-201512",
+      "sigir-201423",
+      "sigir-201412",
+      "sigir-201510",
+      "sigir-201419",
+      "sigir-201520",
+      "sigir-20153"
+    ],
+    "validation": [
+      "sigir-201415",
+      "sigir-20142",
+      "sigir-201430",
+      "sigir-201427",
+      "sigir-201515",
+      "sigir-20141",
+      "sigir-201420",
+      "sigir-201522"
+    ],
+    "test": [
+      "sigir-201422",
+      "sigir-20158",
+      "sigir-201411",
+      "sigir-201516",
+      "sigir-201513",
+      "sigir-201410",
+      "sigir-201421",
+      "sigir-201417"
+    ]
+  },
+  "counts": {
+    "train": {
+      "patients": 37,
+      "annotations": 602,
+      "inclusion": 215,
+      "exclusion": 387
+    },
+    "validation": {
+      "patients": 8,
+      "annotations": 206,
+      "inclusion": 66,
+      "exclusion": 140
+    },
+    "test": {
+      "patients": 8,
+      "annotations": 206,
+      "inclusion": 75,
+      "exclusion": 131
+    }
+  },
+  "annotation_id_sha256": {
+    "train": "effa07bd9b745d599c6a8d5ed0b609d8d2063a6c57adfcd4d9f693c3fc7ceb91",
+    "validation": "8d66f70ef943dfe6d61c4f9298bc27b73d63105a78fea58f75b08d01010032a8",
+    "test": "b8718db7dbd40047e663e6cf5c7746bf9da885e6db860650a95a6be814747681"
+  },
+  "leakage_check": "passed (no patient_id appears in more than one split)"
+}
