@@ -219,7 +219,7 @@ def main() -> None:
                 scaler.scale(loss / args.grad_accum).backward()
             else:
                 (loss / args.grad_accum).backward()
-            running += float(loss)
+            running += float(loss.detach())
             micro += 1
             if micro % args.grad_accum == 0:
                 torch.nn.utils.clip_grad_norm_(trainable, 1.0)
