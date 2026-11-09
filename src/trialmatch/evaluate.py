@@ -21,12 +21,14 @@ import platform
 import time
 from pathlib import Path
 
+import numpy as np
 import torch
 
 from .config import (
     ADAPTER_DIR,
     LABELS,
     LABELS_FOR_TYPE,
+    MAX_NEW_TOKENS as MAX_NEW,
     TARGET_MODEL,
     RESULTS_DIR,
 )
@@ -72,6 +74,7 @@ def _confusion_png(cm, labels, path: Path, title: str) -> None:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
+    cm = np.asarray(cm)
     fig, ax = plt.subplots(figsize=(1.1 * len(labels) + 2.2, 1.0 * len(labels) + 2.0))
     im = ax.imshow(cm, cmap="Blues")
     ax.set_xticks(range(len(labels)), labels=labels, rotation=35, ha="right", fontsize=8)
@@ -155,6 +158,12 @@ def run_variant_split(predictor: Predictor, variant: str, split: str,
     t0 = time.time()
     records = [_prediction_record(ex, predictor.predict(ex)) for ex in examples]
     wall = time.time() - t0
+    return finalize(records, variant, split, predictor=predictor, wall=wall)
+
+
+def finalize(records: list[dict], variant: str, split: str,
+             predictor: Predictor | None = None, wall: float = 0.0) -> dict:
+    """Metrics + figures + error analysis + summary from prediction records."""
 
     gold = [r["gold_label"] for r in records]
     pred = [r["pred_label"] for r in records]
@@ -201,11 +210,11 @@ def run_variant_split(predictor: Predictor, variant: str, split: str,
         "split": split,
         "model": TARGET_MODEL,
         "adapter": str(ADAPTER_DIR) if variant == "tuned" else None,
-        "adapter_loaded": predictor.adapter_loaded,
+        "adapter_loaded": bool(predictor and predictor.adapter_loaded),
         "decoding": {
             "strategy": "greedy, cache-aware, trie-constrained label slot",
             "assistant_prefix": "LABEL:",
-            "max_new_tokens": predictor.max_new_tokens,
+            "max_new_tokens": predictor.max_new_tokens if predictor else MAX_NEW,
             "deterministic": True,
         },
         "n": len(records),
@@ -221,7 +230,7 @@ def run_variant_split(predictor: Predictor, variant: str, split: str,
             "p95": round(sorted(r["latency_s"] for r in records)[int(0.95 * len(records)) - 1], 3),
         },
         "environment": {
-            "device": str(getattr(predictor, "device", "cpu")),
+            "device": str(getattr(predictor, "device", "unknown")),
             "torch": torch.__version__,
             "python": platform.python_version(),
         },
