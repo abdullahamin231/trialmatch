@@ -69,7 +69,8 @@ class Predictor:
             model = model.merge_and_unload()   # single fused checkpoint at inference
             self.adapter_loaded = True
         model.eval()
-        self.model = model
+        self.model = model.to(device)
+        self.device = device
         self.decoder = CachedDecoder(model, dtype=dtype)
         self.label_decoders: dict[str, ConstrainedLabelDecoder] = {}
         self.model_params = sum(p.numel() for p in model.parameters())
